@@ -492,15 +492,21 @@ def comment_sent(): #Valid HTML
     # Making variables global to access them in another function.
     commentdata = request.POST
     # Data is reached.
-    posted_comments.append({'name': str(commentdata['nick']), 'comment': str(commentdata['comment'])})
-    # Data is saved.
-    html="""<h1>Your comment successfully sent!</h1>
-    <table><tr>
-    <td><a href="/comment_list/" class = "button">Click to see other comments</a></td>
-    <td><a href="/assignment3/" class = "button">Click to go to the main page</a></td></tr></table>
-    """
-    # Information and links to Home Page and Comment List.
-    return htmlify("Comment Sent!", html, CSS()) # Returning htmlified content.
+    # Checking if comment or name isn't typed.
+    if str(commentdata['nick'])=="" or str(commentdata['comment'])=="":
+        content = '<h2 class = "error">You did not type name or comment!</h2>\n'
+        content += '<a href = "/assignment3/" class = "button">Return to the list</a>'
+        return htmlify("Error!", content, CSS())
+    else:
+        posted_comments.append({'name': str(commentdata['nick']), 'comment': str(commentdata['comment'])})
+        # Data is saved.
+        html="""<h1>Your comment successfully sent!</h1>
+        <table><tr>
+        <td><a href="/comment_list/" class = "button">Click to see other comments</a></td>
+        <td><a href="/assignment3/" class = "button">Click to go to the main page</a></td></tr></table>
+        """
+        # Information and links to Home Page and Comment List.
+        return htmlify("Comment Sent!", html, CSS()) # Returning htmlified content.
 
 route ('/comment_sent/', 'POST', comment_sent) # Routing...
 
@@ -521,9 +527,10 @@ def comment_list():
         html+="""<tr>
         <td>""" + comment['name'] + """</td>
         <td>""" + comment['comment'] + """</td>
-        </tr></table>"""
+        </tr>"""
     # Adding comments and names as table data.
-    html+="""<table><tr>
+    html+="""</table>
+    <table><tr>
     <td><a href="/assignment3/" class = "button">Click to go to the main page</a></td>
     <td><a href="/comments/" class = "button">Click to add a comment</a></td></tr></table>"""
     # End of html content, with a closing tag and two links, one goes to Home Page and one goes to comment adding page.
@@ -531,6 +538,7 @@ def comment_list():
     return htmlify("Comment List", html, CSS()) # Returning htmlified content.
 
 route('/comment_list/', 'GET', comment_list) # Routing...
+
 
 
 def filter_category():
